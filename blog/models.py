@@ -8,6 +8,10 @@ from wagtail.admin.edit_handlers import FieldPanel, StreamFieldPanel
 from wagtail.images.blocks import ImageChooserBlock
 from wagtail.images.edit_handlers import ImageChooserPanel
 
+from pygments import highlight, styles
+from pygments.lexers import python
+from pygments.formatters import html
+
 
 class HomePage(Page):
     content_panels = Page.content_panels
@@ -16,6 +20,33 @@ class HomePage(Page):
 
     class Meta:
         verbose_name = "Homepage"
+
+
+class CodeStructValue(blocks.StructValue):
+    def formatted_code(self):
+        html_formatter = html.HtmlFormatter(
+            cssclass='syntax-highlight',
+            classprefix='pygment-',
+            linenos='inline',
+            noclasses=True,
+            hl_lines=[9,10,11,12,13,14],
+            style=self.get('style'),
+        )
+        print(list(styles.get_all_styles()))
+        highlighted_code = highlight(
+            self.get('code'),
+            python.Python3Lexer(),
+            html_formatter)
+        return highlighted_code
+
+
+class CodeBlock(blocks.StructBlock):
+    code = blocks.TextBlock()
+    style = blocks.ChoiceBlock(choices=[(x, x) for x in styles.get_all_styles()], default='default')
+
+    class Meta:
+        template = 'blog/blocks/code_highlight.html'
+        value_class = CodeStructValue
 
 
 class BlogPage(Page):
@@ -30,6 +61,7 @@ class BlogPage(Page):
         ('heading', blocks.CharBlock(template='blog/blocks/heading.html')),
         ('paragraph', blocks.RichTextBlock(features=['bold', 'italic', 'link'])),
         ('image', ImageChooserBlock(template='blog/blocks/image.html')),
+        ('code', CodeBlock()),
     ], null=True, blank=True)
 
     content_panels = Page.content_panels + [
@@ -43,3 +75,5 @@ class BlogPage(Page):
 
     class Meta:
         verbose_name = "Blogpage"
+
+

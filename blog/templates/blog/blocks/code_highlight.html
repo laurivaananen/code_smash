@@ -1,5 +1,10 @@
-{% load wagtailcore_tags %}
-
-<div>
-    {% include_block value.formatted_code %}
+<!-- {% load wagtailcore_tags %} -->
+{% spaceless %}
+<div class="relative">
+    <button class="text-sm copy-btn absolute bg-grey-darker hover:bg-grey-dark pin-r py-2 px-4 tracking-wide rounded-bl text-grey-light" style='font-family: Consolas, Monaco, "Andale Mono", "Ubuntu Mono", monospace' data-clipboard-target="#code-target-{{index}}">COPY</button>
+    <pre class="line-numbers whitespace-pre-wrap break-words">
+        <code class="language-python" id="code-target-{{index}}">{{ value.code }}</code>
+    </pre>
 </div>
+
+{% endspaceless %}

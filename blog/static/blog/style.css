@@ -1,0 +1,10 @@
+.fragment-anchor {
+    display: none;
+}
+
+.fragment-header:hover .fragment-anchor {
+    display: inline-block;
+}
+
+.syntax-highlight {
+}

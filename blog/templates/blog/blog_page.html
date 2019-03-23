@@ -5,20 +5,27 @@
 {% block title %}{{ page.title }}{% endblock %}
 
 {% block content %}
-<div class="container">
-    <div class="row" >
-        <div class="col-lg-8">
-            <h1>{{ page.title }}</h1>
-            <p class="text-muted" >{{ page.first_published_at }} by {{ page.owner }}</p>
-            {% if page.first_published_at != page.last_published_at %}
-                <p class="text-muted" >Updated at: {{ page.last_published_at }}</p>
-            {% endif %}
-            <p class="">{{ page.intro }}</p>
-            <hr>
-            {% for block in page.body %}
-                <section>{% include_block block %}</section>
-            {% endfor %}
-        </div>
-    </div>
+<div class="w-full max-w-xl mx-auto px-6 leading-normal text-lg font-normal">
+    <h1 class="mt-12 mb-2">{{ page.title }}</h1>
+    <p class="text-grey text-sm mb-6" >{{ published }}</p>
+    <p class="">{{ page.intro }}</p>
+    <hr class="border-b my-6">
+    {% for block in page.body %}
+        <section class="mb-4">{% include_block block with index=forloop.counter0 %}</section>
+    {% endfor %}
 </div>
+<script>
+var clipboard = new ClipboardJS('.copy-btn');
+
+clipboard.on('success', function(e) {
+    e.trigger.textContent = 'COPIED';
+    setTimeout(
+        function() {
+            e.trigger.textContent = 'COPY';
+        },
+        2000
+    )
+    e.clearSelection();
+});
+</script>
 {% endblock %}

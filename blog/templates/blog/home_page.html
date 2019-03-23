@@ -5,10 +5,20 @@
 {% block title %}{{ page.title }}{% endblock %}
 
 {% block content %}
-    <h1>{{ page.title }}</h1>
-    <ul>
-    {% for post in page.get_children %}
-        <li><a href="{% pageurl post %}">{{ post.title }}</a></li>
+<div class="container mx-auto">
+    <h1 class="mt-8 mb-4">{{ page.title }}</h1>
+    <ul class="list-reset">
+    {% for post in blogpages %}
+        <li class="overflow-hidden no-underline p-2 mb-6">
+            <div class="flex justify-between mb-2">
+                <a class="no-underline text-indigo" href="{% pageurl post %}">
+                    <h3>{{ post.title }}</h3>
+                </a>
+                <p class="text-sm text-grey-dark">{{ post.specific.first_published_at|timesince }}</p>
+            </div>
+            <p class="text-base">{{ post.specific.intro|truncatewords:40 }}</p>
+        </li>
     {% endfor %}
     </ul>
+</div>
 {% endblock %}

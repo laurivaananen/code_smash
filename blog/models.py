@@ -9,8 +9,10 @@ from wagtail.images.blocks import ImageChooserBlock
 from wagtail.images.edit_handlers import ImageChooserPanel
 
 from pygments import highlight, styles
-from pygments.lexers import python
+from pygments.lexers import python, get_lexer_by_name, get_all_lexers
 from pygments.formatters import html
+
+from setuptools import setup, find_packages
 
 
 class HomePage(Page):
@@ -18,35 +20,25 @@ class HomePage(Page):
 
     max_count = 1
 
+    def get_context(self, request):
+        # Update context to include only published posts, ordered by reverse-chron
+        context = super().get_context(request)
+        blogpages = self.get_children().live().order_by('-first_published_at')
+        context['blogpages'] = blogpages
+        return context
+
     class Meta:
         verbose_name = "Homepage"
 
-
-class CodeStructValue(blocks.StructValue):
-    def formatted_code(self):
-        html_formatter = html.HtmlFormatter(
-            cssclass='syntax-highlight',
-            classprefix='pygment-',
-            linenos='inline',
-            noclasses=True,
-            hl_lines=[9,10,11,12,13,14],
-            style=self.get('style'),
-        )
-        print(list(styles.get_all_styles()))
-        highlighted_code = highlight(
-            self.get('code'),
-            python.Python3Lexer(),
-            html_formatter)
-        return highlighted_code
-
-
 class CodeBlock(blocks.StructBlock):
     code = blocks.TextBlock()
-    style = blocks.ChoiceBlock(choices=[(x, x) for x in styles.get_all_styles()], default='default')
+    # all_styles = [(x, x) for x in styles.get_all_styles()]
+    # all_lexers = [(x[1][0], x[0]) for x in get_all_lexers()]
+    # style = blocks.ChoiceBlock(choices=all_styles, default='default')
+    # lexer = blocks.ChoiceBlock(choices=all_lexers, default='Python3')
 
     class Meta:
         template = 'blog/blocks/code_highlight.html'
-        value_class = CodeStructValue
 
 
 class BlogPage(Page):
@@ -73,7 +65,15 @@ class BlogPage(Page):
     parent_page_types = ['blog.HomePage']
     subpage_types = []
 
+    def get_context(self, request):
+        context = super().get_context(request)
+        first_published = context['page'].first_published_at
+        last_published = context['page'].last_published_at
+        writer = context['page'].owner
+        context['published'] = '{} by {}'.format(first_published.strftime('%d %B %Y'), writer)
+        if first_published != last_published:
+            context['published'] = '{}, updated {}'.format(context['published'], last_published.strftime('%d %B %Y'))
+        return context
+
     class Meta:
         verbose_name = "Blogpage"
-
-

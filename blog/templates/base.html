@@ -5,10 +5,19 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    {% load static %}
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
     <title>{% block title%}Code Smash{% endblock %}</title>
+    <style>body:not(code) { font-family: 'Lato'}</style>
+    <link rel="stylesheet" href="{% static 'blog/style.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'blog/prism.css' %}" type="text/css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.0/clipboard.min.js"></script>
 </head>
-<body>
+<body class="color-black text-black">
     {% block content %}
     {% endblock %}
+    {% load static %}
+    <script src="{% static 'blog/prism.js' %}"></script>
 </body>
 </html>

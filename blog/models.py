@@ -34,11 +34,22 @@ class CodeBlock(blocks.StructBlock):
     code = blocks.TextBlock()
     # all_styles = [(x, x) for x in styles.get_all_styles()]
     # all_lexers = [(x[1][0], x[0]) for x in get_all_lexers()]
-    # style = blocks.ChoiceBlock(choices=all_styles, default='default')
+    languages = [
+        ('html', 'HTML'),
+        ('python', 'Python'),
+        ('javascript', 'Javascript'),
+        ('css', 'CSS'),
+        ('sql', 'SQL'),
+        ('django', 'Django'),
+        ('json', 'JSON'),
+        ('docker', 'Docker'),
+    ]
+    lang = blocks.ChoiceBlock(choices=languages, default='python')
     # lexer = blocks.ChoiceBlock(choices=all_lexers, default='Python3')
 
     class Meta:
         template = 'blog/blocks/code_highlight.html'
+        # form_template = 'blog/blocks/code_highlight_form.html'
 
 
 class BlogPage(Page):
@@ -54,6 +65,11 @@ class BlogPage(Page):
         ('paragraph', blocks.RichTextBlock(features=['bold', 'italic', 'link'])),
         ('image', ImageChooserBlock(template='blog/blocks/image.html')),
         ('code', CodeBlock()),
+        ('carousel', blocks.ListBlock(
+            ImageChooserBlock(),
+            template='blog/blocks/carousel.html',
+            max_count=5
+        )),
     ], null=True, blank=True)
 
     content_panels = Page.content_panels + [

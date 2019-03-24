@@ -1,0 +1,59 @@
+{% load wagtailcore_tags wagtailimages_tags %}
+<div class="flex flex-col">
+    <div class="flex items-center mb-2" style="height: 600px">
+            {% image value|first max-900x600 as tmp_photo %}
+            <img
+                src="{{ tmp_photo.url }}"
+                width="{{ tmp_photo.width }}"
+                height="{{ tmp_photo.height }}"
+                alt="{{ tmp_photo.alt }}"
+                class="mx-auto highlight-{{index}} color-transparent bg-white"
+            />
+    </div>
+    <div class="flex -mx-1 justify-center preview-images preview-{{index}}">
+        {% for img in value %}
+            {% image img height-150 as sm_photo %}
+            {% image img max-900x600 as lg_photo %}
+            <img
+                src="{{ sm_photo.url }}"
+                width="{{ sm_photo.width }}"
+                height="{{ sm_photo.height }}"
+                alt="{{ sm_photo.alt }}"
+                class="mx-1 preview-{{index}} color-transparent{% if forloop.counter == 1 %} active-image{% endif %}"
+                data-full-img="{{ lg_photo.url }}"
+                data-full-width="{{ lg_photo.width }}"
+                data-full-height="{{ lg_photo.height }}"
+            />
+        {% endfor %}
+    </div>
+</div>
+<script>
+function imageGallery() {
+    var meme = null;
+    const highlight = document.querySelector(".highlight-{{index}}");
+    const previews = document.querySelectorAll(".preview-{{index}} img");
+    
+    previews.forEach(preview => {
+        if (preview.className.split(" ").indexOf('active-image') > -1) {
+            meme = preview;
+        }
+        preview.addEventListener('click', function() {
+            const active = this.className.split(" ").indexOf('active-image') > -1;
+            const lgSrc = this.getAttribute('data-full-img');
+            const lgW = this.getAttribute('data-full-width');
+            const lgH = this.getAttribute('data-full-height');
+            if (!active) {
+                this.className += ' active-image'
+                meme.className = meme.className.split(" ").filter(x => x !== 'active-image').join(" ");
+                meme = this;
+
+                highlight.src = "";
+                highlight.width = lgW;
+                highlight.height = lgH;
+                highlight.src = lgSrc;
+            }
+        })
+    })
+}
+imageGallery();
+</script>

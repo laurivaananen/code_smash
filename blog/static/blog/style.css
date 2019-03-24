@@ -8,3 +8,15 @@
 
 .syntax-highlight {
 }
+
+.preview-images img {
+    filter: brightness(50%);
+}
+
+.preview-images img:hover {
+    filter: brightness(75%);
+}
+
+.preview-images img.active-image {
+    filter: brightness(100%);
+}
